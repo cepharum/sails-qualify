@@ -49,7 +49,14 @@ File.readdir( modulesDir, function( err, names ) {
 		}
 	} );
 
-	Vorpal
-		.delimiter( "sails-qualify>" )
-		.show();
+	if ( Mode ) {
+		Vorpal.exec( Mode )
+			.catch( function( cause ) {
+				console.error( String( cause.message || cause || "unknown error" ) );
+			} );
+	} else {
+		Vorpal
+			.delimiter( "sails-qualify>" )
+			.show();
+	}
 } );

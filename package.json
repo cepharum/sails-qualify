@@ -1,26 +1,27 @@
 {
-  "name": "sails-qualifiers",
-  "version": "0.0.1",
-  "description": "Simple tools for switching your sailsjs project.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cepharum/sails-qualifiers.git"
-  },
-  "author": "Thomas Urban",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cepharum/sails-qualifiers/issues"
-  },
-  "homepage": "https://github.com/cepharum/sails-qualifiers#readme",
-  "bin": {
-    "sails-qualify": "./cli.js"
-  },
-  "dependencies": {
-    "minimist": "^1.2.0",
-    "vorpal": "^1.11.4"
-  }
+	"name": "sails-qualifiers",
+	"version": "0.0.1",
+	"description": "Simple tools for switching your sailsjs project.",
+	"main": "index.js",
+	"scripts": {
+		"start": "node ./cli.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cepharum/sails-qualifiers.git"
+	},
+	"author": "Thomas Urban",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/cepharum/sails-qualifiers/issues"
+	},
+	"homepage": "https://github.com/cepharum/sails-qualifiers#readme",
+	"bin": {
+		"sails-qualify": "./cli.js"
+	},
+	"dependencies": {
+		"minimist": "^1.2.0",
+		"vorpal": "^1.11.4"
+	}
 }
