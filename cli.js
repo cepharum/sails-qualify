@@ -32,7 +32,9 @@ var File = require( "fs" );
 var Argv = require( "minimist" )( process.argv.slice( 2 ) );
 var Vorpal = require( "vorpal" )();
 
-var Options = {};
+var Options = parseOptions( Argv, {
+	projectDir: __dirname
+} );
 var Mode = Argv._.shift();
 var Args = Argv._;
 
@@ -60,3 +62,12 @@ File.readdir( modulesDir, function( err, names ) {
 			.show();
 	}
 } );
+
+
+function parseOptions( input, defaults ) {
+	if ( input.projectDir ) {
+		defaults.projectDir = input.projectDir;
+	}
+
+	return defaults;
+}
