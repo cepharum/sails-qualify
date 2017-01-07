@@ -1,0 +1,57 @@
+# sails-qualifier
+
+Simple Tools for switching your sailsjs project.
+
+
+## Motivation
+
+Since starting to use sailsjs for development we repeatedly had issues with 
+using our favourite techniques in a freshly created sailsjs project. We've
+started with a patch but this approach isn't working out for long and renders
+inappropriate when trying to use parts of what is done by that patch, only.
+
+### Why not create a sails-generator?
+
+Sails generators are obviously design to create folders and write files from
+templates. That's completely improper for what these tools are made for.
+
+### Why not use yeoman?
+
+These tools are considered to work after scaffolding sailsjs project using the
+generators that come with sailsjs itself. yeoman is a scaffolding tool on its
+own. It's waste of resources to have another scaffolding framework installed to
+complete the work of some other framework scaffolding stuff before.
+
+
+## Important Notes
+
+These tools without any warranty. You should use them after having backed up
+your project, only. Use some version control system!
+
+Tools are basically tested on freshly created sailsjs projects. They might fail
+on mature projects having survived several manual revisions of build files etc.
+
+## Installation
+
+* `npm install -g sails-qualifiers`
+
+## Usage
+
+* `sails-qualify bower`
+
+This qualifier adds bower for managing client side assets.
+
+* `sails-qualify sass`
+
+This qualifier is trying to switch your existing sailsjs project to work with
+SASS instead of LESS.
+
+* `sails-qualify pug`
+
+This qualifier switches views to be written in pug (fka jade) instead of ejs.
+
+* `sails-qualify angular2`
+
+This qualifier is setting up support for angular2 based client side application
+compile using ahead-of-time compiler `ngc`.
+
