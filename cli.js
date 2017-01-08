@@ -26,19 +26,21 @@
  * @author: cepharum
  */
 
-var Path = require( "path" );
-var File = require( "fs" );
+const Path = require( "path" );
+const File = require( "fs" );
 
-var Argv = require( "minimist" )( process.argv.slice( 2 ) );
-var Vorpal = require( "vorpal" )();
+const Argv = require( "minimist" )( process.argv.slice( 2 ) );
+const Vorpal = require( "vorpal" )();
 
-var Options = parseOptions( Argv, {
+const Options = parseOptions( Argv, {
 	projectDir: __dirname
 } );
-var Mode = Argv._.shift();
-var Args = Argv._;
+const Mode = Argv._.shift();
+const Args = Argv._;
 
-var modulesDir = Path.resolve( __dirname, "modules" );
+
+let modulesDir = Path.resolve( __dirname, "modules" );
+
 File.readdir( modulesDir, function( err, names ) {
 	if ( err ) {
 		console.error( "failed loading modules" );
@@ -59,6 +61,7 @@ File.readdir( modulesDir, function( err, names ) {
 	} else {
 		Vorpal
 			.delimiter( "sails-qualify>" )
+			.history( "sails-qualify" )
 			.show();
 	}
 } );
