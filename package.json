@@ -21,8 +21,8 @@
     "sails-qualify": "./cli.js"
   },
   "dependencies": {
+    "glob": "^7.1.1",
     "lodash": "^4.17.4",
-    "minimist": "^1.2.0",
     "vorpal": "^1.11.4"
   },
   "engines": {

@@ -26,12 +26,17 @@
  * @author: cepharum
  */
 
-module.exports = function( Vorpal, Options, Args, Lib ) {
+module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
 		.command( "sass", "Adjusts sailsjs project to use SASS instead of LESS." )
-		.action( function( localArgs, done ) {
-			done();
+		.action( function( args ) {
+			let self = this;
+
+			args = Lib.utility.qualifyArguments( args );
+
+			return Lib.validator.isSailsProject()
+				.then( () => null );
 		} );
 
 };

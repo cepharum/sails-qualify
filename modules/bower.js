@@ -26,20 +26,65 @@
  * @author: cepharum
  */
 
-module.exports = function( Vorpal, Options, Args, Lib ) {
+const _ = require( "lodash" );
+
+
+module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
 		.command( "bower", "Adjusts sailsjs project to use bower for managing client-side assets." )
-		.action( function( localArgs, done ) {
-			Lib.command.invoke( "bower -v" )
-				.catch( function() {
-					// missing bower?
-					return Lib.command.invoke( "npm install --save -g bower" );
+		.option( "-j, --json", "Update existing bower.json file." )
+		.option( "-r, --rc", "Update existing .bowerrc file." )
+		.action( function( args ) {
+			let self = this;
+
+			args = Lib.utility.qualifyArguments( args );
+
+			return Lib.validator.isSailsProject()
+				.then( function( isSailsProject ) {
+					if ( !isSailsProject ) {
+						throw new Error( "not a sails project to qualify" );
+					}
+
+					return Lib.command.invoke( "?bower -v" )
+						.catch( function( cause ) {
+							switch ( cause.code ) {
+								case "ENOENT" :
+									return Lib.command.invoke( "?npm install --save -g bower" );
+
+								default :
+									throw cause;
+							}
+						} )
+						.then( () => Lib.meta.readPackageJson() )
+						.then( function( npmConfig ) {
+							return Lib.meta.readBowerJson()
+								.catch( () => false )
+								.then( function( bowerConfig ) {
+									if ( !bowerConfig || args.options.json ) {
+										self.log( "writing bower.json" );
+										return Lib.meta.writeBowerJson( _.extend( bowerConfig || {}, {
+											name: bowerConfig.name || npmConfig.name || "",
+											description: bowerConfig.description || npmConfig.description || "",
+											authors: bowerConfig.authors || [ npmConfig.author ],
+											license: bowerConfig.license || npmConfig.license,
+											private: bowerConfig.private || npmConfig.private || false,
+										} ) );
+									}
+								} )
+								.then( () => Lib.meta.readBowerRc() )
+								.catch( () => false )
+								.then( function( bowerConfig ) {
+									if ( !bowerConfig || args.options.rc ) {
+										self.log( "writing .bowerrc" );
+										return Lib.meta.writeBowerRc( _.extend( bowerConfig || {}, {
+											directory: bowerConfig.directory || "assets/dependencies",
+										} ) );
+									}
+								} );
+						} );
 				} )
-				.then( function() {
-					return Lib.command.meta.readPackageJson();
-				} )
-				.then( done, done );
+				.then( () => null );
 		} );
 
 };

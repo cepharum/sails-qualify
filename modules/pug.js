@@ -26,12 +26,17 @@
  * @author: cepharum
  */
 
-module.exports = function( Vorpal, Options, Args, Lib ) {
+module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
 		.command( "pug", "Adjusts sailsjs project to use pug instead of ejs for views." )
-		.action( function( localArgs, done ) {
-			done();
+		.action( function( args ) {
+			let self = this;
+
+			args = Lib.utility.qualifyArguments( args );
+
+			return Lib.validator.isSailsProject()
+				.then( () => null );
 		} );
 
 };
