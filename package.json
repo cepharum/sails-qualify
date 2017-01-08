@@ -23,5 +23,8 @@
 	"dependencies": {
 		"minimist": "^1.2.0",
 		"vorpal": "^1.11.4"
+	},
+	"engines": {
+		"node": ">=4.3.2"
 	}
 }
