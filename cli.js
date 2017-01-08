@@ -53,6 +53,20 @@ File.readdir( modulesDir, function( err, names ) {
 		}
 	} );
 
+	Vorpal
+		.catch( "[words...]", "Integrates extensions to sails-qualifier." )
+		.action( function( args, cb ) {
+			let words   = args.words,
+				command = words.shift();
+
+			try {
+				return require( "sails-qualifier-" + command )( Options, Args.concat( words ), cb, require( "./lib" ) );
+			} catch ( e ) {
+				console.error( "no such command or extension: " + command );
+				cb();
+			}
+		} );
+
 	if ( Mode ) {
 		Vorpal.exec( Mode )
 			.catch( function( cause ) {
