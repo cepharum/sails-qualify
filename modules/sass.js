@@ -26,7 +26,7 @@
  * @author: cepharum
  */
 
-module.exports = function( Vorpal, options, args ) {
+module.exports = function( Vorpal, Options, Args, Lib ) {
 
 	Vorpal
 		.command( "sass", "Adjusts sailsjs project to use SASS instead of LESS." )

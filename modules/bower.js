@@ -26,12 +26,20 @@
  * @author: cepharum
  */
 
-module.exports = function( Vorpal, options, args ) {
+module.exports = function( Vorpal, Options, Args, Lib ) {
 
 	Vorpal
 		.command( "bower", "Adjusts sailsjs project to use bower for managing client-side assets." )
 		.action( function( localArgs, done ) {
-			done();
+			Lib.command.invoke( "bower -v" )
+				.catch( function() {
+					// missing bower?
+					return Lib.command.invoke( "npm install --save -g bower" );
+				} )
+				.then( function() {
+					return Lib.command.meta.readPackageJson();
+				} )
+				.then( done, done );
 		} );
 
 };

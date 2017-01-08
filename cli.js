@@ -38,6 +38,8 @@ const Options = parseOptions( Argv, {
 const Mode = Argv._.shift();
 const Args = Argv._;
 
+const Lib = Object.seal( require( "./lib" )( Options ) );
+
 
 let modulesDir = Path.resolve( __dirname, "modules" );
 
@@ -49,7 +51,7 @@ File.readdir( modulesDir, function( err, names ) {
 
 	names.forEach( function( name ) {
 		if ( name[0] !== '.' ) {
-			require( Path.resolve( modulesDir, name ) )( Vorpal, Options, Args );
+			require( Path.resolve( modulesDir, name ) )( Vorpal, Options, Args, Lib );
 		}
 	} );
 
@@ -60,7 +62,7 @@ File.readdir( modulesDir, function( err, names ) {
 				command = words.shift();
 
 			try {
-				return require( "sails-qualifier-" + command )( Options, Args.concat( words ), cb, require( "./lib" ) );
+				return require( "sails-qualifier-" + command )( Options, Args.concat( words ), Lib, cb );
 			} catch ( e ) {
 				console.error( "no such command or extension: " + command );
 				cb();

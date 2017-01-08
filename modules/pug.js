@@ -26,7 +26,7 @@
  * @author: cepharum
  */
 
-module.exports = function( Vorpal, options, args ) {
+module.exports = function( Vorpal, Options, Args, Lib ) {
 
 	Vorpal
 		.command( "pug", "Adjusts sailsjs project to use pug instead of ejs for views." )
