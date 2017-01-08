@@ -64,11 +64,18 @@ module.exports = function( Vorpal, Lib ) {
 									if ( !bowerConfig || args.options.json ) {
 										self.log( "writing bower.json" );
 										return Lib.meta.writeBowerJson( _.extend( bowerConfig || {}, {
-											name: bowerConfig.name || npmConfig.name || "",
+											name:        bowerConfig.name || npmConfig.name || "",
 											description: bowerConfig.description || npmConfig.description || "",
-											authors: bowerConfig.authors || [ npmConfig.author ],
-											license: bowerConfig.license || npmConfig.license,
-											private: bowerConfig.private || npmConfig.private || false,
+											authors:     bowerConfig.authors || [npmConfig.author],
+											license:     bowerConfig.license || npmConfig.license,
+											private:     bowerConfig.private || npmConfig.private || false,
+											ignore:      bowerConfig.ignore || [
+												"**/.*",
+												"node_modules",
+												"bower_components",
+												"test",
+												"tests"
+											],
 										} ) );
 									}
 								} )
