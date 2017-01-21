@@ -45,17 +45,18 @@ This qualifier adds bower for managing client side assets.
 
 * `sails-qualify sass`
 
-This qualifier is trying to switch your existing sailsjs project to work with
-SASS instead of LESS.
+TO BE ADDED: This qualifier is trying to switch your existing sailsjs project to 
+work with SASS instead of LESS.
 
 * `sails-qualify pug`
 
-This qualifier switches views to be written in pug (fka jade) instead of ejs.
+TO BE ADDED: This qualifier switches views to be written in pug (fka jade) 
+instead of ejs.
 
 * `sails-qualify angular2`
 
-This qualifier is setting up support for angular2 based client side application
-compile using ahead-of-time compiler `ngc`.
+TO BE ADDED: This qualifier is setting up support for angular2 based client side 
+application compile using ahead-of-time compiler `ngc`.
 
 
 ## Extending
