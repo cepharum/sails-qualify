@@ -1,5 +1,5 @@
 {
-  "name": "sails-qualifiers",
+  "name": "sails-qualify",
   "version": "0.0.1",
   "description": "Simple tools for switching your sailsjs project.",
   "main": "index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cepharum/sails-qualifiers.git"
+    "url": "https://github.com/cepharum/sails-qualify.git"
   },
   "author": "Thomas Urban",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cepharum/sails-qualifiers/issues"
+    "url": "https://github.com/cepharum/sails-qualify/issues"
   },
-  "homepage": "https://github.com/cepharum/sails-qualifiers#readme",
+  "homepage": "https://github.com/cepharum/sails-qualify#readme",
   "bin": {
     "sails-qualify": "./cli.js"
   },

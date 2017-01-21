@@ -1,6 +1,6 @@
-# sails-qualifier
+# sails-qualify
 
-Simple Tools for switching your sailsjs project.
+simple but extensible tools for switching setup of your sailsjs project.
 
 
 ## Motivation
@@ -33,7 +33,7 @@ on mature projects having survived several manual revisions of build files etc.
 
 ## Installation
 
-* `npm install -g sails-qualifiers`
+* `npm install -g sails-qualify`
 
 ## Usage
 

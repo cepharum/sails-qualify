@@ -59,13 +59,13 @@ File.readdir( modulesDir, function( err, names ) {
 
 	// integrate fallback handler to try invoking extension on using unknown cmd
 	Vorpal
-		.catch( "[words...]", "Integrates custom extensions into sails-qualifier." )
+		.catch( "[words...]", "Integrates custom extensions into sails-qualify." )
 		.action( function( args, cb ) {
 			let words   = args.words,
 			    command = words.shift();
 
 			try {
-				return require( "sails-qualifier-" + command )( Vorpal, Lib, Lib.utility.qualifyArguments( args ) );
+				return require( "sails-qualify-" + command )( Vorpal, Lib, Lib.utility.qualifyArguments( args ) );
 			} catch ( e ) {
 				console.error( "no such command or extension: " + command );
 				cb();
