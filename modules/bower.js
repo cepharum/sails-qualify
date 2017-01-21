@@ -40,12 +40,8 @@ module.exports = function( Vorpal, Lib ) {
 
 			args = Lib.utility.qualifyArguments( args );
 
-			return Lib.validator.isSailsProject()
-				.then( function( isSailsProject ) {
-					if ( !isSailsProject ) {
-						throw new Error( "not a sails project to qualify" );
-					}
-
+			return Lib.validator.isSailsProject( true )
+				.then( function() {
 					return Lib.command.invoke( "?bower -v" )
 						.catch( function( cause ) {
 							switch ( cause.code ) {
@@ -91,7 +87,7 @@ module.exports = function( Vorpal, Lib ) {
 								} );
 						} );
 				} )
-				.then( () => null );
+				.then( () => this.log( "Set up bower." ) );
 		} );
 
 };

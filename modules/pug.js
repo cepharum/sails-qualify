@@ -35,8 +35,10 @@ module.exports = function( Vorpal, Lib ) {
 
 			args = Lib.utility.qualifyArguments( args );
 
-			return Lib.validator.isSailsProject()
-				.then( () => null );
+			return Lib.validator.isSailsProject( true )
+				.then( function() {
+				} )
+				.then( () => this.log( "Switched to pug.") );
 		} );
 
 };
