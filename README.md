@@ -12,15 +12,15 @@ inappropriate when trying to use parts of what is done by that patch, only.
 
 ### Why not create a sails-generator?
 
-Sails generators are obviously design to create folders and write files from
-templates. That's completely improper for what these tools are made for.
+Sails generators are obviously designed to create folders and write files from
+templates. That's completely insufficient for what this tool is made for.
 
-### Why not use yeoman?
+### Why not use yeoman or sth. similar?
 
-These tools are considered to work after scaffolding sailsjs project using the
+This tool is considered to work after scaffolding sailsjs project using the
 generators that come with sailsjs itself. yeoman is a scaffolding tool on its
 own. It's waste of resources to have another scaffolding framework installed to
-complete the work of some other framework scaffolding stuff before.
+complete the work of some other framework having scaffolded stuff before.
 
 
 ## Important Notes
@@ -31,9 +31,11 @@ your project, only. Use some version control system!
 Tools are basically tested on freshly created sailsjs projects. They might fail
 on mature projects having survived several manual revisions of build files etc.
 
+
 ## Installation
 
 * `npm install -g sails-qualify`
+
 
 ## Usage
 
@@ -54,6 +56,7 @@ This qualifier switches views to be written in pug (fka jade) instead of ejs.
 
 This qualifier is setting up support for angular2 based client side application
 compile using ahead-of-time compiler `ngc`.
+
 
 ## Extending
 
