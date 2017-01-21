@@ -60,7 +60,7 @@ File.readdir( modulesDir, function( err, names ) {
 	// integrate fallback handler to try invoking extension on using unknown cmd
 	Vorpal
 		.catch( "[words...]", "Integrates custom extensions into sails-qualifier." )
-		.action( function( args ) {
+		.action( function( args, cb ) {
 			let words   = args.words,
 			    command = words.shift();
 
@@ -123,10 +123,14 @@ function parseOptions( input, defaults ) {
 
 					let cmd;
 
-					if ( name.length > 1 ) {
-						cmd = makeArgument( "--", name, "=", input[name] );
-					} else {
-						cmd = makeArgument( "-", name, " ", input[name] );
+					switch ( name.length ) {
+						case 1 :
+							cmd = makeArgument( "-", name, " ", input[name] );
+							break;
+						case 0 :
+							break;
+						default :
+							cmd = makeArgument( "--", name, "=", input[name] );
 					}
 
 					if ( cmd ) {
@@ -135,7 +139,7 @@ function parseOptions( input, defaults ) {
 			}
 		} );
 
-	if ( input._.length ) {
+	if ( input._ && input._.length ) {
 		parsed.command = input._.shift();
 
 		if ( input._.length || args.length ) {
@@ -176,8 +180,12 @@ function makeArgument( prefix, name, operator, value ) {
  * @returns {string} optionally quoted value
  */
 function stringify( value ) {
-	if ( /\s/.test( value ) ) {
-		return '"' + value.replace( /"/g, '\"' ) + '"';
+	switch ( typeof value ) {
+		case "string" :
+			if ( /\s/.test( value ) ) {
+				return '"' + value.replace( /"/g, '\"' ) + '"';
+			}
+			break;
 	}
 
 	return value;
