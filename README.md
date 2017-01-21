@@ -55,3 +55,19 @@ This qualifier switches views to be written in pug (fka jade) instead of ejs.
 This qualifier is setting up support for angular2 based client side application
 compile using ahead-of-time compiler `ngc`.
 
+## Extending
+
+This tool is supporting extensions implicitly whenever user tries to enter some 
+command that isn't part of core implementation. E.g. on trying to enter command
+`mymodifier` which isn't part of core the tool is trying to require dependency
+module named `sails-qualify-mymodifier`. This module is considered to export a
+function to be invoked with three arguments:
+
+1. instance of Vorpal used to manage CLI interactions
+2. all libraries of core implementation incl. tools for managing files and 
+   folders
+3. provided set of qualified arguments
+
+The method might return promise on starting some asynchronous process.
+
+> Any such module must be installed using npm prior to invoking it as described.
