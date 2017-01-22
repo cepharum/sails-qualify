@@ -3,14 +3,15 @@
  *
  * ---------------------------------------------------------------
  *
- * Injects SCSS files of client-side components into import file to be compiled.
+ * Injects SCSS files of client-side angular components into importer file to be
+ * compiled.
  *
  */
 module.exports = function( grunt ) {
 
 	var PATH = require( "path" );
 
-	grunt.config.set( "sass-inject", {
+	grunt.config.set( "sass-angular", {
 		dev: {
 			files: [{
 				src:  [
@@ -22,7 +23,7 @@ module.exports = function( grunt ) {
 		}
 	} );
 
-	grunt.task.registerMultiTask( "sass-inject", "Injects rules for importing collected files", function() {
+	grunt.task.registerMultiTask( "sass-angular", "Injects styling of angular components.", function() {
 		this.files.forEach( function( pair ) {
 			var code = pair.src
 				.map( function( filename ) {

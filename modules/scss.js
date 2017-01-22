@@ -47,10 +47,10 @@ module.exports = function( Vorpal, Lib ) {
 					return Lib.file.writeTemplate( "scss/importer.scss", "assets/styles/importer.scss" );
 				} )
 				.then( function() {
-					return Lib.file.stat( "tasks/config/less-inject.js" )
+					return Lib.file.stat( "tasks/config/less-angular.js" )
 						.then( function( stat ) {
 							if ( stat.isFile() ) {
-								return Lib.file.writeTemplate( "scss/scss-inject.js", "tasks/config/scss-inject.js" );
+								return Lib.file.writeTemplate( "angular/scss-angular.js", "tasks/config/scss-angular.js" );
 							}
 						}, function() {} );
 				} )
@@ -68,7 +68,7 @@ module.exports = function( Vorpal, Lib ) {
 						return Promise.all( [
 							Lib.file.remove( "assets/styles/importer.less" ),
 							Lib.file.remove( "tasks/config/less.js" ),
-							Lib.file.remove( "tasks/config/less-inject.js" )
+							Lib.file.remove( "tasks/config/less-angular.js" )
 						] );
 					}
 				} )
@@ -79,7 +79,7 @@ module.exports = function( Vorpal, Lib ) {
 	function adjustAssetTask( code ) {
 		code = code.toString();
 
-		code = code.replace( /(["'])less(-inject)?(:.+?)\1/g, function( all, quote, task, mode ) {
+		code = code.replace( /(["'])less(-angular)?(:.+?)\1/g, function( all, quote, task, mode ) {
 			return quote + "sass" + ( task || "" ) + mode + quote;
 		} );
 

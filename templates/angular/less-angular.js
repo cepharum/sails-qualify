@@ -3,14 +3,15 @@
  *
  * ---------------------------------------------------------------
  *
- * Injects LESS files of client-side components into import file to be compiled.
+ * Injects LESS files of client-side angular components into importer file to be
+ * compiled.
  *
  */
 module.exports = function( grunt ) {
 
 	var PATH = require( "path" );
 
-	grunt.config.set( "less-inject", {
+	grunt.config.set( "less-angular", {
 		dev: {
 			files: [{
 				src:  [
@@ -22,7 +23,7 @@ module.exports = function( grunt ) {
 		}
 	} );
 
-	grunt.task.registerMultiTask( "less-inject", "Injects rules for importing collected files", function() {
+	grunt.task.registerMultiTask( "less-angular", "Injects styling of angular components.", function() {
 		this.files.forEach( function( pair ) {
 			var code = pair.src
 				.map( function( filename ) {
