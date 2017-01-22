@@ -81,7 +81,7 @@ module.exports = function( Vorpal, Lib ) {
 									if ( !bowerConfig || args.options.rc ) {
 										self.log( "writing .bowerrc" );
 										return Lib.meta.writeBowerRc( _.extend( bowerConfig || {}, {
-											directory: bowerConfig.directory || "assets/dependencies",
+											directory: bowerConfig.directory || "assets/js/dependencies",
 										} ) );
 									}
 								} );
