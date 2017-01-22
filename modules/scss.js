@@ -44,7 +44,7 @@ module.exports = function( Vorpal, Lib ) {
 
 			return Lib.validator.isSailsProject( true )
 				.then( function() {
-					return Lib.command.invoke( "?npm", ["install", "--save", "grunt-sass"] );
+					return Lib.meta.installDependency( "grunt-sass" );
 				} )
 				.then( function() {
 					return Lib.file.writeTemplate( "scss/importer.scss", "assets/styles/importer.scss" );
