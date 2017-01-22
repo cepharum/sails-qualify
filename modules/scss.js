@@ -34,7 +34,7 @@
 module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
-		.command( "scss", "Adjusts sailsjs project to use SCSS instead of LESS." )
+		.command( "scss", "Switches to SCSS for styling." )
 		.alias( "sass" )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
 		.action( function( args ) {
@@ -43,6 +43,9 @@ module.exports = function( Vorpal, Lib ) {
 			args = Lib.utility.qualifyArguments( args );
 
 			return Lib.validator.isSailsProject( true )
+				.then( function() {
+					return Lib.command.invoke( "?npm", ["install", "--save", "grunt-sass"] );
+				} )
 				.then( function() {
 					return Lib.file.writeTemplate( "scss/importer.scss", "assets/styles/importer.scss" );
 				} )
