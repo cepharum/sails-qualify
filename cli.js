@@ -84,15 +84,24 @@ File.readdir( modulesDir, function( err, names ) {
 		} );
 
 
-	// show CLI for entering several commands to run
-	Vorpal
-		.delimiter( "sails-qualify>" )
-		.history( "sails-qualify" );
-
 	if ( Options.command ) {
-		Vorpal.exec( Options.command );
+		// FIXME Adjusting Vorpal.ui this way doesn't use officially documented API. See https://github.com/dthree/vorpal/issues/171 for more.
+		Vorpal.ui.parent = Vorpal;
+		Vorpal.ui.refresh();
+
+		Vorpal
+			.exec( Options.command )
+			.then( function() {
+				process.exit( 0 );
+			}, function() {
+				process.exit( process.exitCode || 1 );
+			} );
 	} else {
-		Vorpal.show();
+		// show CLI for entering several commands to run
+		Vorpal
+			.delimiter( "sails-qualify>" )
+			.history( "sails-qualify" )
+			.show();
 	}
 } );
 
@@ -144,26 +153,30 @@ function parseOptions( input, defaults ) {
 
 					switch ( name.length ) {
 						case 1 :
-							cmd = makeArgument( "-", name, " ", input[name] );
+							cmd = makeArgument( "-", name, input[name] );
 							break;
 						case 0 :
 							break;
 						default :
-							cmd = makeArgument( "--", name, "=", input[name] );
+							cmd = makeArgument( "--", name, input[name] );
 					}
 
-					if ( cmd ) {
-						args.push( cmd );
+					if ( cmd && cmd.length ) {
+						args = args.concat( cmd );
 					}
 			}
 		} );
 
 	if ( input._ && input._.length ) {
-		parsed.command = input._.shift();
+		parsed.command = input._.slice( 0, 1 ).concat( args, input._.slice( 1 ) )
+			.map( function( arg ) {
+				if ( arg.match( /\s/ ) ) {
+					return arg.indexOf( '"' ) > -1 ? "'" + arg + "'" : '"' + arg + '"';
+				}
 
-		if ( input._.length || args.length ) {
-			parsed.command += " " + args.concat( input._.map( ( n ) => stringify( n ) ) ).join( " " );
-		}
+				return arg;
+			} )
+			.join( " " );
 	}
 
 	return parsed;
@@ -174,22 +187,21 @@ function parseOptions( input, defaults ) {
  *
  * @param {string} prefix prefix indicating use of switch, e.g. "--" or "-"
  * @param {string} name name of option/switch
- * @param {string} operator operator to use for separating option name from value, e.g. "="
  * @param {string} value raw value of option
- * @returns {string} compiled string describing given option/switch for use in a command line
+ * @returns {[]|[string, string]|[string]} single option or option w/ value, empty array if option is falsy
  */
-function makeArgument( prefix, name, operator, value ) {
+function makeArgument( prefix, name, value ) {
 	value = stringify( value );
 
 	if ( value === true ) {
-		return prefix + name;
+		return [ prefix + name ];
 	}
 
 	if ( value === false ) {
-		return null;
+		return [];
 	}
 
-	return prefix + name + operator + value;
+	return [ prefix + name, value ];
 }
 
 /**
