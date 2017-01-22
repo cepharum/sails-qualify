@@ -47,12 +47,9 @@ module.exports = function( Vorpal, Lib ) {
 					return Lib.file.writeTemplate( "scss/importer.scss", "assets/styles/importer.scss" );
 				} )
 				.then( function() {
-					return Lib.file.stat( "tasks/config/less-angular.js" )
-						.then( function( stat ) {
-							if ( stat.isFile() ) {
-								return Lib.file.writeTemplate( "angular/scss-angular.js", "tasks/config/scss-angular.js" );
-							}
-						}, function() {} );
+					return Lib.file.isFile( "tasks/config/less-angular.js", function() {
+						return Lib.file.writeTemplate( "angular/scss-angular.js", "tasks/config/scss-angular.js" );
+					} );
 				} )
 				.then( function() {
 					return Lib.file.writeTemplate( "scss/scss.js", "tasks/config/scss.js" );
