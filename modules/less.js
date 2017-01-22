@@ -34,7 +34,7 @@
 module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
-		.command( "less", "Adjusts sailsjs project to use LESS instead of SCSS." )
+		.command( "less", "Switches to LESS for styling." )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
 		.action( function( args ) {
 			let self = this;

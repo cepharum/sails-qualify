@@ -32,7 +32,7 @@ const _ = require( "lodash" );
 module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
-		.command( "bower", "Adjusts sailsjs project to use bower for managing client-side assets." )
+		.command( "bower", "Adds bower for client-side library management." )
 		.option( "-j, --json", "Update existing bower.json file." )
 		.option( "-r, --rc", "Update existing .bowerrc file." )
 		.action( function( args ) {
