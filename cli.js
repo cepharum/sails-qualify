@@ -35,8 +35,18 @@ const Vorpal = require( "vorpal" )();
 // process invocation arguments
 const Options = parseOptions( Vorpal.parse( process.argv, { use: "minimist" } ), {
 	projectDir: process.cwd(),
-	templatesDir: Path.resolve( __dirname, "templates" )
+	templatesDir: Path.resolve( __dirname, "templates" ),
 } );
+
+
+if ( !Options.switches.withoutGit && !process.env.WITHOUT_GIT ) {
+	let gitDir = Path.resolve( Options.switches.projectDir, ".git" );
+	if ( !File.existsSync( gitDir ) || !File.statSync( gitDir ).isDirectory() ) {
+		console.error( "Project folder must be controlled with git." );
+		console.error( "Restart with --without-git if you don't care.")
+		process.exit( 1 );
+	}
+}
 
 
 // load all library modules
@@ -118,6 +128,10 @@ function parseOptions( input, defaults ) {
 			switch ( name ) {
 				case "project" :
 					parsed.switches.projectDir = Path.resolve( __dirname, input[name] );
+					break;
+
+				case "without-git" :
+					parsed.switches.withoutGit = true;
 					break;
 
 				case "_" :
