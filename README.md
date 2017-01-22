@@ -50,8 +50,7 @@ SCSS instead of LESS.
 
 * `sails-qualify pug`
 
-TO BE ADDED: This qualifier switches views to be written in pug (fka jade) 
-instead of ejs.
+This qualifier switches views to be written in pug (fka jade) instead of ejs.
 
 * `sails-qualify angular2`
 

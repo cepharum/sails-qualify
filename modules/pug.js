@@ -29,7 +29,8 @@
 module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
-		.command( "pug", "Adjusts sailsjs project to use pug instead of ejs for views." )
+		.command( "pug", "Switches to pug for view description." )
+		.option( "--pushy", "Remove files not in use anymore after adjusting." )
 		.action( function( args ) {
 			let self = this;
 
@@ -37,8 +38,89 @@ module.exports = function( Vorpal, Lib ) {
 
 			return Lib.validator.isSailsProject( true )
 				.then( function() {
+					return Lib.meta.installDependency( ["grunt-contrib-pug", "pug"] );
+				} )
+				.then( function() {
+					return Lib.file.writeTemplate( "pug/pug.js", "tasks/config/pug.js" );
+				} )
+				.then( function() {
+					return Lib.file.modify( "config/views.js", adjustConfiguration );
+				} )
+				.then( function() {
+					return Lib.file.modify( "tasks/pipeline.js", adjustPipeline );
+				} )
+				.then( function() {
+					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
+				} )
+				.then( function() {
+					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+				} )
+				.then( function() {
+					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+				} )
+				.then( function() {
+					return Promise.all( [
+						Lib.file.writeTemplate( "pug/views/403.pug", "views/403.pug" ),
+						Lib.file.writeTemplate( "pug/views/404.pug", "views/404.pug" ),
+						Lib.file.writeTemplate( "pug/views/500.pug", "views/500.pug" ),
+						Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage.pug" ),
+						Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout.pug" ),
+					] );
+				} )
+				.then( function() {
+					if ( args.options.pushy ) {
+						return self.prompt( {
+							type: "confirm",
+							name: "remove",
+							default: false,
+							message: "Genuine view files can't be restored w/o git. Really remove now?"
+						} )
+							.then( function( answers ) {
+								if ( answers.remove ) {
+									return Promise.all( [
+										Lib.file.remove( "views/403.ejs" ),
+										Lib.file.remove( "views/404.ejs" ),
+										Lib.file.remove( "views/500.ejs" ),
+										Lib.file.remove( "views/homepage.ejs" ),
+										Lib.file.remove( "views/layout.ejs" ),
+									] );
+								}
+							} );
+					}
 				} )
 				.then( () => this.log( "Switched to pug.") );
 		} );
 
+
+	function adjustConfiguration( code ) {
+		code = code.toString();
+
+		code = code.replace( /^(\s*(?:engine|"engine"|'engine')\s*:\s*)(["']).+?\2/mg, function( all, pre, quote ) {
+			return pre + quote + "pug" + quote;
+		} );
+
+		return Buffer.from( code );
+	}
+
+	function adjustPipeline( code ) {
+		code = code.toString();
+
+		code = code.replace( /(\btemplateFilesToInject\b[^[]*\[)([^\]]+)(\])/g, function( all, pre, inner, post ) {
+			return pre + inner.replace( /\.html(["'])/g, function( all, quote ) {
+				 return ".{jade,pug}" + quote;
+			} ) + post;
+		} );
+
+		return Buffer.from( code );
+	}
+
+	function adjustAssetTask( code ) {
+		code = code.toString();
+
+		code = code.replace( /(["'])jst(:.+?)\1/g, function( all, quote, mode ) {
+			return quote + "pug" + mode + quote;
+		} );
+
+		return Buffer.from( code );
+	}
 };
