@@ -43,10 +43,10 @@ on mature projects having survived several manual revisions of build files etc.
 
 This qualifier adds bower for managing client side assets.
 
-* `sails-qualify sass`
+* `sails-qualify scss`
 
-TO BE ADDED: This qualifier is trying to switch your existing sailsjs project to 
-work with SASS instead of LESS.
+This qualifier is trying to switch your existing sailsjs project to work with 
+SCSS instead of LESS.
 
 * `sails-qualify pug`
 
