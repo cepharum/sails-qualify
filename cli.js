@@ -34,7 +34,8 @@ const Vorpal = require( "vorpal" )();
 
 // process invocation arguments
 const Options = parseOptions( Vorpal.parse( process.argv, { use: "minimist" } ), {
-	projectDir: __dirname
+	projectDir: process.cwd(),
+	templatesDir: Path.resolve( __dirname, "templates" )
 } );
 
 
@@ -90,6 +91,10 @@ File.readdir( modulesDir, function( err, names ) {
  */
 
 /**
+ * @typedef {{switches: KVOptionSet, unprocessed: KVOptionSet, command: string=}} ProcessedOptions
+ */
+
+/**
  * Parses provided options parsed using `minimist`.
  *
  * The resulting set separates all switches into supported and unsupported ones
@@ -98,7 +103,7 @@ File.readdir( modulesDir, function( err, names ) {
  *
  * @param {KVOptionSet} input
  * @param {KVOptionSet} defaults
- * @returns {{switches: KVOptionSet, unprocessed: KVOptionSet, command: string=}}
+ * @returns {ProcessedOptions}
  */
 function parseOptions( input, defaults ) {
 	let parsed = {
