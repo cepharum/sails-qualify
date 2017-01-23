@@ -31,40 +31,43 @@ module.exports = function( Vorpal, Lib ) {
 	Vorpal
 		.command( "pug", "Switches to pug for view description." )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
+		.option( "--compatible", "Call it 'jade' instead of 'pug'." )
 		.action( function( args ) {
 			let self = this;
 
 			args = Lib.utility.qualifyArguments( args );
 
+			let name = args.options.compatible ? "jade" : "pug";
+
 			return Lib.validator.isSailsProject( true )
 				.then( function() {
-					return Lib.meta.installDependency( ["grunt-contrib-pug", "pug"] );
+					return Lib.meta.installDependency( ["grunt-contrib-" + name, name] );
 				} )
 				.then( function() {
-					return Lib.file.writeTemplate( "pug/pug.js", "tasks/config/pug.js" );
+					return Lib.file.writeTemplate( "pug/pug.js", "tasks/config/" + name + ".js", { mode: name } );
 				} )
 				.then( function() {
-					return Lib.file.modify( "config/views.js", adjustConfiguration );
+					return Lib.file.modify( "config/views.js", adjustConfiguration.bind( undefined, name ) );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/pipeline.js", adjustPipeline );
+					return Lib.file.modify( "tasks/pipeline.js", adjustPipeline.bind( undefined, name ) );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
+					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask.bind( undefined, name ) );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask.bind( undefined, name ) );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask.bind( undefined, name ) );
 				} )
 				.then( function() {
 					return Promise.all( [
-						Lib.file.writeTemplate( "pug/views/403.pug", "views/403.pug" ),
-						Lib.file.writeTemplate( "pug/views/404.pug", "views/404.pug" ),
-						Lib.file.writeTemplate( "pug/views/500.pug", "views/500.pug" ),
-						Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage.pug" ),
-						Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout.pug" ),
+						Lib.file.writeTemplate( "pug/views/403.pug", "views/403." + name ),
+						Lib.file.writeTemplate( "pug/views/404.pug", "views/404." + name ),
+						Lib.file.writeTemplate( "pug/views/500.pug", "views/500." + name ),
+						Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage." + name ),
+						Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout." + name ),
 					] );
 				} )
 				.then( function() {
@@ -92,17 +95,17 @@ module.exports = function( Vorpal, Lib ) {
 		} );
 
 
-	function adjustConfiguration( code ) {
+	function adjustConfiguration( actualName, code ) {
 		code = code.toString();
 
 		code = code.replace( /^(\s*(?:engine|"engine"|'engine')\s*:\s*)(["']).+?\2/mg, function( all, pre, quote ) {
-			return pre + quote + "pug" + quote;
+			return pre + quote + actualName + quote;
 		} );
 
 		return Buffer.from( code );
 	}
 
-	function adjustPipeline( code ) {
+	function adjustPipeline( actualName, code ) {
 		code = code.toString();
 
 		code = code.replace( /(\btemplateFilesToInject\b[^[]*\[)([^\]]+)(\])/g, function( all, pre, inner, post ) {
@@ -114,11 +117,11 @@ module.exports = function( Vorpal, Lib ) {
 		return Buffer.from( code );
 	}
 
-	function adjustAssetTask( code ) {
+	function adjustAssetTask( actualName, code ) {
 		code = code.toString();
 
 		code = code.replace( /(["'])jst(:.+?)\1/g, function( all, quote, mode ) {
-			return quote + "pug" + mode + quote;
+			return quote + actualName + mode + quote;
 		} );
 
 		return Buffer.from( code );

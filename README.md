@@ -52,6 +52,10 @@ SCSS instead of LESS.
 
 This qualifier switches views to be written in pug (fka jade) instead of ejs.
 
+> **NOTE!** sailsjs as of 0.12.x does not support pug when it comes to injection
+of templates, scripts and stylesheets. Thus you need to use legacy versions of
+jade instead by using option `--compatible`. 
+
 * `sails-qualify angular2`
 
 TO BE ADDED: This qualifier is setting up support for angular2 based client side 
