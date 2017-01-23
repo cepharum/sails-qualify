@@ -12,7 +12,7 @@
  */
 
 module.exports = function( grunt ) {
-	grunt.config.set( "<%= mode %>", {
+	grunt.config.set( "pug", {
 		dev: {
 			options: {
 				client:      true,
@@ -26,5 +26,5 @@ module.exports = function( grunt ) {
 		}
 	} );
 
-	grunt.loadNpmTasks( "grunt-contrib-<%= mode %>" );
+	grunt.loadNpmTasks( "grunt-contrib-pug" );
 };

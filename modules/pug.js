@@ -31,43 +31,43 @@ module.exports = function( Vorpal, Lib ) {
 	Vorpal
 		.command( "pug", "Switches to pug for view description." )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
-		.option( "--compatible", "Call it 'jade' instead of 'pug'." )
 		.action( function( args ) {
 			let self = this;
 
 			args = Lib.utility.qualifyArguments( args );
 
-			let name = args.options.compatible ? "jade" : "pug";
-
 			return Lib.validator.isSailsProject( true )
 				.then( function() {
-					return Lib.meta.installDependency( ["grunt-contrib-" + name, name] );
+					return Lib.meta.installDependency( ["grunt-contrib-pug", "pug"] );
 				} )
 				.then( function() {
-					return Lib.file.writeTemplate( "pug/pug.js", "tasks/config/" + name + ".js", { mode: name } );
+					return Lib.file.writeTemplate( "pug/pug.js", "tasks/config/pug.js" );
 				} )
 				.then( function() {
-					return Lib.file.modify( "config/views.js", adjustConfiguration.bind( undefined, name ) );
+					return Lib.file.modify( "config/views.js", adjustConfiguration );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/pipeline.js", adjustPipeline.bind( undefined, name ) );
+					return Lib.file.modify( "tasks/pipeline.js", adjustPipeline );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask.bind( undefined, name ) );
+					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask.bind( undefined, name ) );
+					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
 				} )
 				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask.bind( undefined, name ) );
+					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+				} )
+				.then( function() {
+					return Lib.file.modify( "tasks/config/sails-linker.js", adjustLinkerConfiguration );
 				} )
 				.then( function() {
 					return Promise.all( [
-						Lib.file.writeTemplate( "pug/views/403.pug", "views/403." + name ),
-						Lib.file.writeTemplate( "pug/views/404.pug", "views/404." + name ),
-						Lib.file.writeTemplate( "pug/views/500.pug", "views/500." + name ),
-						Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage." + name ),
-						Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout." + name ),
+						Lib.file.writeTemplate( "pug/views/403.pug", "views/403.pug" ),
+						Lib.file.writeTemplate( "pug/views/404.pug", "views/404.pug" ),
+						Lib.file.writeTemplate( "pug/views/500.pug", "views/500.pug" ),
+						Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage.pug" ),
+						Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout.pug" ),
 					] );
 				} )
 				.then( function() {
@@ -95,17 +95,17 @@ module.exports = function( Vorpal, Lib ) {
 		} );
 
 
-	function adjustConfiguration( actualName, code ) {
+	function adjustConfiguration( code ) {
 		code = code.toString();
 
 		code = code.replace( /^(\s*(?:engine|"engine"|'engine')\s*:\s*)(["']).+?\2/mg, function( all, pre, quote ) {
-			return pre + quote + actualName + quote;
+			return pre + quote + "pug" + quote;
 		} );
 
 		return Buffer.from( code );
 	}
 
-	function adjustPipeline( actualName, code ) {
+	function adjustPipeline( code ) {
 		code = code.toString();
 
 		code = code.replace( /(\btemplateFilesToInject\b[^[]*\[)([^\]]+)(\])/g, function( all, pre, inner, post ) {
@@ -117,11 +117,23 @@ module.exports = function( Vorpal, Lib ) {
 		return Buffer.from( code );
 	}
 
-	function adjustAssetTask( actualName, code ) {
+	function adjustAssetTask( code ) {
 		code = code.toString();
 
 		code = code.replace( /(["'])jst(:.+?)\1/g, function( all, quote, mode ) {
-			return quote + actualName + mode + quote;
+			return quote + "pug" + mode + quote;
+		} );
+
+		return Buffer.from( code );
+	}
+
+	function adjustLinkerConfiguration( code ) {
+		code = code.toString();
+
+		code = code.replace( /(\b(?:files|'files'|"files")\s*:\s*\{)([^}]+)(\})/g, function( all, pre, inner, post ) {
+			return pre + inner.replace( /\.jade(["'])/g, function( all, quote ) {
+					return ".pug" + quote;
+				} ) + post;
 		} );
 
 		return Buffer.from( code );
