@@ -1,6 +1,6 @@
 {
   "name": "sails-qualify",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "simple but extensible tools for switching setup of your sailsjs project",
   "main": "index.js",
   "scripts": {
