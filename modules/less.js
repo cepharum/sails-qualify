@@ -36,11 +36,8 @@ module.exports = function( Vorpal, Lib ) {
 	Vorpal
 		.command( "less", "Switches to LESS for styling." )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
-		.action( lessAction );
-
-	return {
-		action: lessAction
-	};
+		.action( lessAction )
+		.actionHandler = lessAction;
 
 
 	function lessAction( args ) {

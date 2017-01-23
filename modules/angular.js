@@ -30,11 +30,8 @@ module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
 		.command( "angular", "Prepares for developing client with AngularJS 1.x." )
-		.action( angularAction );
-
-	return {
-		action: angularAction
-	};
+		.action( angularAction )
+		.actionHandler = angularAction;
 
 
 	function angularAction( args ) {
@@ -42,7 +39,7 @@ module.exports = function( Vorpal, Lib ) {
 
 		args = Lib.utility.qualifyArguments( args );
 
-		return Vorpal.exec( "bower" )
+		return Vorpal.find( "bower" ).actionHandler( args )
 			.then( function() {
 				return Lib.file.read( "tasks/register/compileAssets.js" )
 					.then( function( code ) {

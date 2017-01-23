@@ -31,11 +31,8 @@ module.exports = function( Vorpal, Lib ) {
 	Vorpal
 		.command( "pug", "Switches to pug for view description." )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
-		.action( pugAction );
-
-	return {
-		action: pugAction
-	};
+		.action( pugAction )
+		.actionHandler = pugAction;
 
 
 	function pugAction( args ) {

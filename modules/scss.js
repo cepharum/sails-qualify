@@ -37,11 +37,8 @@ module.exports = function( Vorpal, Lib ) {
 		.command( "scss", "Switches to SCSS for styling." )
 		.alias( "sass" )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
-		.action( scssAction );
-
-	return {
-		action: scssAction
-	};
+		.action( scssAction )
+		.actionHandler = scssAction;
 
 
 	function scssAction( args ) {

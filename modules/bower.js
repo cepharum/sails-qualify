@@ -35,11 +35,8 @@ module.exports = function( Vorpal, Lib ) {
 		.command( "bower", "Adds bower for client-side library management." )
 		.option( "-j, --json", "Update existing bower.json file." )
 		.option( "-r, --rc", "Update existing .bowerrc file." )
-		.action( bowerAction );
-
-	return {
-		action: bowerAction
-	};
+		.action( bowerAction )
+		.actionHandler = bowerAction;
 
 
 	function bowerAction( args ) {
