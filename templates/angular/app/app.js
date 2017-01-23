@@ -26,20 +26,13 @@
  * @author: cepharum
  */
 
-module.exports = function( Vorpal, Lib ) {
-
-	Vorpal
-		.command( "angular2", "Prepares sailsjs for developing angular2 based client." )
-		.action( function( args ) {
-			let self = this;
-
-			args = Lib.utility.qualifyArguments( args );
-
-			return Vorpal.exec( "bower" )
-				.then( function() {
-					self.log( "angular2" );
-				} )
-				.then( () => null );
+angular.module( App.manifest.name, [
+	"ui.router",
+] )
+	.config( function( $urlRouterProvider, $locationProvider ) {
+		$urlRouterProvider.otherwise( "/view/home" );
+		$locationProvider.html5Mode( {
+			enabled:     true,
+			requireBase: false
 		} );
-
-};
+	} );
