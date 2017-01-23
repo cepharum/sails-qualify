@@ -35,59 +35,65 @@ module.exports = function( Vorpal, Lib ) {
 		.command( "bower", "Adds bower for client-side library management." )
 		.option( "-j, --json", "Update existing bower.json file." )
 		.option( "-r, --rc", "Update existing .bowerrc file." )
-		.action( function( args ) {
-			let self = this;
+		.action( bowerAction );
 
-			args = Lib.utility.qualifyArguments( args );
+	return {
+		action: bowerAction
+	};
 
-			return Lib.validator.isSailsProject( true )
-				.then( function() {
-					return Lib.command.invoke( "?bower -v" )
-						.catch( function( cause ) {
-							switch ( cause.code ) {
-								case "ENOENT" :
-									return Lib.command.invoke( "?npm install --save -g bower" );
 
-								default :
-									throw cause;
-							}
-						} )
-						.then( () => Lib.meta.readPackageJson() )
-						.then( function( npmConfig ) {
-							return Lib.meta.readBowerJson()
-								.catch( () => false )
-								.then( function( bowerConfig ) {
-									if ( !bowerConfig || args.options.json ) {
-										self.log( "writing bower.json" );
-										return Lib.meta.writeBowerJson( _.extend( bowerConfig || {}, {
-											name:        bowerConfig.name || npmConfig.name || "",
-											description: bowerConfig.description || npmConfig.description || "",
-											authors:     bowerConfig.authors || [npmConfig.author],
-											license:     bowerConfig.license || npmConfig.license,
-											private:     bowerConfig.private || npmConfig.private || false,
-											ignore:      bowerConfig.ignore || [
-												"**/.*",
-												"node_modules",
-												"bower_components",
-												"test",
-												"tests"
-											],
-										} ) );
-									}
-								} )
-								.then( () => Lib.meta.readBowerRc() )
-								.catch( () => false )
-								.then( function( bowerConfig ) {
-									if ( !bowerConfig || args.options.rc ) {
-										self.log( "writing .bowerrc" );
-										return Lib.meta.writeBowerRc( _.extend( bowerConfig || {}, {
-											directory: bowerConfig.directory || "assets/js/dependencies",
-										} ) );
-									}
-								} );
-						} );
-				} )
-				.then( () => this.log( "Set up bower." ) );
-		} );
+	function bowerAction( args ) {
+		let self = this;
 
+		args = Lib.utility.qualifyArguments( args );
+
+		return Lib.validator.isSailsProject( true )
+			.then( function() {
+				return Lib.command.invoke( "?bower -v" )
+					.catch( function( cause ) {
+						switch ( cause.code ) {
+							case "ENOENT" :
+								return Lib.command.invoke( "?npm install --save -g bower" );
+
+							default :
+								throw cause;
+						}
+					} )
+					.then( () => Lib.meta.readPackageJson() )
+					.then( function( npmConfig ) {
+						return Lib.meta.readBowerJson()
+							.catch( () => false )
+							.then( function( bowerConfig ) {
+								if ( !bowerConfig || args.options.json ) {
+									self.log( "writing bower.json" );
+									return Lib.meta.writeBowerJson( _.extend( bowerConfig || {}, {
+										name:        bowerConfig.name || npmConfig.name || "",
+										description: bowerConfig.description || npmConfig.description || "",
+										authors:     bowerConfig.authors || [npmConfig.author],
+										license:     bowerConfig.license || npmConfig.license,
+										private:     bowerConfig.private || npmConfig.private || false,
+										ignore:      bowerConfig.ignore || [
+											"**/.*",
+											"node_modules",
+											"bower_components",
+											"test",
+											"tests"
+										],
+									} ) );
+								}
+							} )
+							.then( () => Lib.meta.readBowerRc() )
+							.catch( () => false )
+							.then( function( bowerConfig ) {
+								if ( !bowerConfig || args.options.rc ) {
+									self.log( "writing .bowerrc" );
+									return Lib.meta.writeBowerRc( _.extend( bowerConfig || {}, {
+										directory: bowerConfig.directory || "assets/js/dependencies",
+									} ) );
+								}
+							} );
+					} );
+			} )
+			.then( () => this.log( "Set up bower." ) );
+	}
 };

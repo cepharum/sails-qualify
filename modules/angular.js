@@ -30,44 +30,50 @@ module.exports = function( Vorpal, Lib ) {
 
 	Vorpal
 		.command( "angular", "Prepares for developing client with AngularJS 1.x." )
-		.action( function( args ) {
-			let self = this;
+		.action( angularAction );
 
-			args = Lib.utility.qualifyArguments( args );
+	return {
+		action: angularAction
+	};
 
-			return Vorpal.exec( "bower" )
-				.then( function() {
-					return Lib.file.read( "tasks/register/compileAssets.js" )
-						.then( function( code ) {
-							let match = code.match( /("')(s[ca]ss|less):.+?\1/ );
-							if ( match ) {
-								return match[2]
-							}
 
-							throw new Error( "Can't detect whether LESS or SCSS is used." );
+	function angularAction( args ) {
+		let self = this;
+
+		args = Lib.utility.qualifyArguments( args );
+
+		return Vorpal.exec( "bower" )
+			.then( function() {
+				return Lib.file.read( "tasks/register/compileAssets.js" )
+					.then( function( code ) {
+						let match = code.match( /("')(s[ca]ss|less):.+?\1/ );
+						if ( match ) {
+							return match[2]
+						}
+
+						throw new Error( "Can't detect whether LESS or SCSS is used." );
+					} );
+			} )
+			.then( function( styleMode ) {
+				if ( styleMode == "less" ) {
+					// ensure to have injection markers in importer.less
+					return Lib.file.modify( "assets/styles/importer.less", function( content ) {
+						content = content.toString();
+
+						// TODO insert injection markers unless found in content
+
+						return content;
+					} )
+						.then( function() {
+							return "less";
 						} );
-				} )
-				.then( function( styleMode ) {
-					if ( styleMode == "less" ) {
-						// ensure to have injection markers in importer.less
-						return Lib.file.modify( "assets/styles/importer.less", function( content ) {
-							content = content.toString();
+				}
 
-							// TODO insert injection markers unless found in content
+				return "scss";
+			} )
+			.then( function( styleMode ) {
 
-							return content;
-						} )
-							.then( function() {
-								return "less";
-							} );
-					}
-
-					return "scss";
-				} )
-				.then( function( styleMode ) {
-
-				} )
-				.then( () => this.log( "Enabled AngularJS 1.x based client." ) );
-		} );
-
+			} )
+			.then( () => this.log( "Enabled AngularJS 1.x based client." ) );
+	}
 };

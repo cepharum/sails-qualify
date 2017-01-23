@@ -36,41 +36,47 @@ module.exports = function( Vorpal, Lib ) {
 	Vorpal
 		.command( "less", "Switches to LESS for styling." )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
-		.action( function( args ) {
-			let self = this;
+		.action( lessAction );
 
-			args = Lib.utility.qualifyArguments( args );
+	return {
+		action: lessAction
+	};
 
-			return Lib.validator.isSailsProject( true )
-				.then( function() {
-					return Lib.file.writeTemplate( "less/importer.less", "assets/styles/importer.less" );
-				} )
-				.then( function() {
-					return Lib.file.isFile( "tasks/config/scss-angular.js", function() {
-						return Lib.file.writeTemplate( "angular/less-angular.js", "tasks/config/less-angular.js" );
-					} );
-				} )
-				.then( function() {
-					return Lib.file.writeTemplate( "less/less.js", "tasks/config/less.js" );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
-				} )
-				.then( function() {
-					if ( args.options.pushy ) {
-						return Promise.all( [
-							Lib.file.remove( "assets/styles/importer.scss" ),
-							Lib.file.remove( "tasks/config/scss.js" ),
-							Lib.file.remove( "tasks/config/scss-angular.js" )
-						] );
-					}
-				} )
-				.then( () => this.log( "Switched to LESS." ) );
-		} );
 
+	function lessAction( args ) {
+		let self = this;
+
+		args = Lib.utility.qualifyArguments( args );
+
+		return Lib.validator.isSailsProject( true )
+			.then( function() {
+				return Lib.file.writeTemplate( "less/importer.less", "assets/styles/importer.less" );
+			} )
+			.then( function() {
+				return Lib.file.isFile( "tasks/config/scss-angular.js", function() {
+					return Lib.file.writeTemplate( "angular/less-angular.js", "tasks/config/less-angular.js" );
+				} );
+			} )
+			.then( function() {
+				return Lib.file.writeTemplate( "less/less.js", "tasks/config/less.js" );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+			} )
+			.then( function() {
+				if ( args.options.pushy ) {
+					return Promise.all( [
+						Lib.file.remove( "assets/styles/importer.scss" ),
+						Lib.file.remove( "tasks/config/scss.js" ),
+						Lib.file.remove( "tasks/config/scss-angular.js" )
+					] );
+				}
+			} )
+			.then( () => this.log( "Switched to LESS." ) );
+	}
 
 	function adjustAssetTask( code ) {
 		code = code.toString();

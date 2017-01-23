@@ -37,44 +37,50 @@ module.exports = function( Vorpal, Lib ) {
 		.command( "scss", "Switches to SCSS for styling." )
 		.alias( "sass" )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
-		.action( function( args ) {
-			let self = this;
+		.action( scssAction );
 
-			args = Lib.utility.qualifyArguments( args );
+	return {
+		action: scssAction
+	};
 
-			return Lib.validator.isSailsProject( true )
-				.then( function() {
-					return Lib.meta.installDependency( "grunt-sass" );
-				} )
-				.then( function() {
-					return Lib.file.writeTemplate( "scss/importer.scss", "assets/styles/importer.scss" );
-				} )
-				.then( function() {
-					return Lib.file.isFile( "tasks/config/less-angular.js", function() {
-						return Lib.file.writeTemplate( "angular/scss-angular.js", "tasks/config/scss-angular.js" );
-					} );
-				} )
-				.then( function() {
-					return Lib.file.writeTemplate( "scss/scss.js", "tasks/config/scss.js" );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
-				} )
-				.then( function() {
-					if ( args.options.pushy ) {
-						return Promise.all( [
-							Lib.file.remove( "assets/styles/importer.less" ),
-							Lib.file.remove( "tasks/config/less.js" ),
-							Lib.file.remove( "tasks/config/less-angular.js" )
-						] );
-					}
-				} )
-				.then( () => this.log( "Switched to SCSS." ) );
-		} );
 
+	function scssAction( args ) {
+		let self = this;
+
+		args = Lib.utility.qualifyArguments( args );
+
+		return Lib.validator.isSailsProject( true )
+			.then( function() {
+				return Lib.meta.installDependency( "grunt-sass" );
+			} )
+			.then( function() {
+				return Lib.file.writeTemplate( "scss/importer.scss", "assets/styles/importer.scss" );
+			} )
+			.then( function() {
+				return Lib.file.isFile( "tasks/config/less-angular.js", function() {
+					return Lib.file.writeTemplate( "angular/scss-angular.js", "tasks/config/scss-angular.js" );
+				} );
+			} )
+			.then( function() {
+				return Lib.file.writeTemplate( "scss/scss.js", "tasks/config/scss.js" );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+			} )
+			.then( function() {
+				if ( args.options.pushy ) {
+					return Promise.all( [
+						Lib.file.remove( "assets/styles/importer.less" ),
+						Lib.file.remove( "tasks/config/less.js" ),
+						Lib.file.remove( "tasks/config/less-angular.js" )
+					] );
+				}
+			} )
+			.then( () => this.log( "Switched to SCSS." ) );
+	}
 
 	function adjustAssetTask( code ) {
 		code = code.toString();

@@ -31,69 +31,75 @@ module.exports = function( Vorpal, Lib ) {
 	Vorpal
 		.command( "pug", "Switches to pug for view description." )
 		.option( "--pushy", "Remove files not in use anymore after adjusting." )
-		.action( function( args ) {
-			let self = this;
+		.action( pugAction );
 
-			args = Lib.utility.qualifyArguments( args );
+	return {
+		action: pugAction
+	};
 
-			return Lib.validator.isSailsProject( true )
-				.then( function() {
-					return Lib.meta.installDependency( ["grunt-contrib-pug", "pug"] );
-				} )
-				.then( function() {
-					return Lib.file.writeTemplate( "pug/pug.js", "tasks/config/pug.js" );
-				} )
-				.then( function() {
-					return Lib.file.modify( "config/views.js", adjustConfiguration );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/pipeline.js", adjustPipeline );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
-				} )
-				.then( function() {
-					return Lib.file.modify( "tasks/config/sails-linker.js", adjustLinkerConfiguration );
-				} )
-				.then( function() {
-					return Promise.all( [
-						Lib.file.writeTemplate( "pug/views/403.pug", "views/403.pug" ),
-						Lib.file.writeTemplate( "pug/views/404.pug", "views/404.pug" ),
-						Lib.file.writeTemplate( "pug/views/500.pug", "views/500.pug" ),
-						Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage.pug" ),
-						Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout.pug" ),
-					] );
-				} )
-				.then( function() {
-					if ( args.options.pushy ) {
-						return self.prompt( {
-							type: "confirm",
-							name: "remove",
-							default: false,
-							message: "Genuine view files can't be restored w/o git. Really remove now?"
-						} )
-							.then( function( answers ) {
-								if ( answers.remove ) {
-									return Promise.all( [
-										Lib.file.remove( "views/403.ejs" ),
-										Lib.file.remove( "views/404.ejs" ),
-										Lib.file.remove( "views/500.ejs" ),
-										Lib.file.remove( "views/homepage.ejs" ),
-										Lib.file.remove( "views/layout.ejs" ),
-									] );
-								}
-							} );
-					}
-				} )
-				.then( () => this.log( "Switched to pug.") );
-		} );
 
+	function pugAction( args ) {
+		let self = this;
+
+		args = Lib.utility.qualifyArguments( args );
+
+		return Lib.validator.isSailsProject( true )
+			.then( function() {
+				return Lib.meta.installDependency( ["grunt-contrib-pug", "pug"] );
+			} )
+			.then( function() {
+				return Lib.file.writeTemplate( "pug/pug.js", "tasks/config/pug.js" );
+			} )
+			.then( function() {
+				return Lib.file.modify( "config/views.js", adjustConfiguration );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/pipeline.js", adjustPipeline );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/register/compileAssets.js", adjustAssetTask );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/register/syncAssets.js", adjustAssetTask );
+			} )
+			.then( function() {
+				return Lib.file.modify( "tasks/config/sails-linker.js", adjustLinkerConfiguration );
+			} )
+			.then( function() {
+				return Promise.all( [
+					Lib.file.writeTemplate( "pug/views/403.pug", "views/403.pug" ),
+					Lib.file.writeTemplate( "pug/views/404.pug", "views/404.pug" ),
+					Lib.file.writeTemplate( "pug/views/500.pug", "views/500.pug" ),
+					Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage.pug" ),
+					Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout.pug" ),
+				] );
+			} )
+			.then( function() {
+				if ( args.options.pushy ) {
+					return self.prompt( {
+						type: "confirm",
+						name: "remove",
+						default: false,
+						message: "Genuine view files can't be restored w/o git. Really remove now?"
+					} )
+						.then( function( answers ) {
+							if ( answers.remove ) {
+								return Promise.all( [
+									Lib.file.remove( "views/403.ejs" ),
+									Lib.file.remove( "views/404.ejs" ),
+									Lib.file.remove( "views/500.ejs" ),
+									Lib.file.remove( "views/homepage.ejs" ),
+									Lib.file.remove( "views/layout.ejs" ),
+								] );
+							}
+						} );
+				}
+			} )
+			.then( () => this.log( "Switched to pug.") );
+	}
 
 	function adjustConfiguration( code ) {
 		code = code.toString();
