@@ -91,6 +91,6 @@ module.exports = function( Vorpal, Lib ) {
 							} );
 					} );
 			} )
-			.then( () => this.log( "Set up bower." ) );
+			.then( () => self.log( "Set up bower." ) );
 	}
 };

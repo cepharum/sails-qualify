@@ -38,7 +38,7 @@ module.exports = function( grunt ) {
 
 			grunt.file.write( pair.dest,
 				grunt.file.read( pair.dest )
-					.replace( /(\/\/\s*LESS-STYLES[^\n]*\n)[\s\S]*?(\/\/\s*LESS-STYLES\s+END\b)/g, "$1" + code + "$2" )
+					.replace( /(\/\/\s*COMPONENT\s+STYLES[^\n]*\n)[\s\S]*?(\/\/\s*COMPONENT\s+STYLES\s+END\b)/g, "$1" + code + "$2" )
 			);
 		} );
 	} );
