@@ -36,11 +36,22 @@ module.exports = function( Vorpal, Lib ) {
 
 
 	function pugAction( args ) {
-		let self = this;
+		let self   = this,
+			config = {
+				appName: undefined
+			};
 
 		args = Lib.utility.qualifyArguments( args );
 
 		return Lib.validator.isSailsProject( true )
+			.then( function extractConfiguration() {
+				return Lib.view.readAttribute( "views/layout", "ng-app" )
+					.then( function( foundName ) {
+						if ( foundName !== undefined && foundName !== null ) {
+							config.appName = String( foundName );
+						}
+					} );
+			} )
 			.then( function() {
 				return Lib.meta.installDependency( ["grunt-contrib-pug", "pug"] );
 			} )
@@ -73,6 +84,27 @@ module.exports = function( Vorpal, Lib ) {
 					Lib.file.writeTemplate( "pug/views/homepage.pug", "views/homepage.pug" ),
 					Lib.file.writeTemplate( "pug/views/layout.pug", "views/layout.pug" ),
 				] );
+			} )
+			.then( function writeAppName() {
+				let adjusted = false;
+
+				return Lib.view.processAttribute( "views/layout", "ng-app", changer )
+					.then( function() {
+						if ( !adjusted ) {
+							return Lib.view.processAttribute( "views/layout", "ng-app", adder );
+						}
+					} );
+
+				function changer( element, value ) {
+					adjusted = true;
+					return config.appName || value;
+				}
+
+				function adder( element ) {
+					if ( element.toLowerCase() === "html" ) {
+						return config.appName;
+					}
+				}
 			} )
 			.then( function() {
 				if ( args.options.pushy ) {

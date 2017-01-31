@@ -45,12 +45,20 @@ module.exports = function( Vorpal, Lib ) {
 		args = Lib.utility.qualifyArguments( args );
 
 		return Vorpal.find( "bower" ).actionHandler.call( self, args )
+			.then( function extractConfiguration() {
+				return Lib.view.readAttribute( "views/layout", "ng-app" )
+					.then( function( foundAppName ) {
+						if ( foundAppName !== undefined && foundAppName !== null ) {
+							config.appName = String( foundAppName );
+						}
+					} );
+			} )
 			.then( function askConfiguration() {
 				return self.prompt( {
 					type: "string",
 					name: "appName",
 					message: "Provide name of AngularJS module to describe client app! ",
-					default: "myapp",
+					default: config.appName || "myapp",
 					validate: function( input ) {
 						return Boolean( input.trim().match( /^[a-z][_a-z0-9]*$/i ) );
 					}
@@ -153,6 +161,27 @@ module.exports = function( Vorpal, Lib ) {
 
 					return content;
 				} );
+			} )
+			.then( function writeAppName() {
+				let adjusted = false;
+
+				return Lib.view.processAttribute( "views/layout", "ng-app", changer )
+					.then( function() {
+						if ( !adjusted ) {
+							return Lib.view.processAttribute( "views/layout", "ng-app", adder );
+						}
+					} );
+
+				function changer( element, value ) {
+					adjusted = true;
+					return config.appName || value;
+				}
+
+				function adder( element ) {
+					if ( element.toLowerCase() === "html" ) {
+						return config.appName;
+					}
+				}
 			} )
 			.then( () => this.log( "Enabled AngularJS 1.x based client." ) );
 	}
